@@ -1,0 +1,34 @@
+name: Build and Publish Firmware
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "bletemps/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: esp-idf build
+        uses: espressif/esp-idf-ci-action@v1
+        with:
+          esp_idf_version: v5.5
+          target: esp32s3
+          path: bletemps
+
+      - name: Archive Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware
+          path: |
+            bletemps/build/bootloader/bootloader.bin
+            bletemps/build/partition_table/partition-table.bin
+            bletemps/build/bletemps.bin

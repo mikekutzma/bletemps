@@ -71,11 +71,6 @@ static const struct ble_gatt_svc_def gatt_svcs[] = {
                 //  .flags = BLE_GATT_CHR_F_READ,
                 //  .access_cb = device_read},
                 // {
-                //     .uuid = BLE_UUID128_DECLARE(BLE_UUID_CHAR_WIFI),
-                //     .flags = BLE_GATT_CHR_F_WRITE,
-                //     .access_cb = write_cb,
-                // },
-                // {
                 //     .uuid = BLE_UUID128_DECLARE(BLE_UUID_CHAR_NTP),
                 //     .flags = BLE_GATT_CHR_F_WRITE,
                 //     .access_cb = write_cb_log_data,
@@ -93,12 +88,7 @@ static const struct ble_gatt_svc_def gatt_svcs[] = {
                     .val_handle = &notify_click_handle,
                     .descriptors =
                         (struct ble_gatt_dsc_def[]){
-                            // {
-                            //     .uuid = BLE_UUID16_DECLARE(0x2902),
-                            //     .att_flags = BLE_ATT_F_READ |
-                            //     BLE_ATT_F_WRITE,
-                            // },
-                            {0}, // end of descriptors
+                            {0},
                         },
                 },
                 {0},
@@ -173,12 +163,6 @@ void host_task(void *param) {
                      // is executed
 }
 
-// int64_t xx_time_get_time() {
-//   struct timeval tv;
-//   gettimeofday(&tv, NULL);
-//   return (tv.tv_sec * 1000LL + (tv.tv_usec / 1000LL));
-// }
-
 static int click_notify_callback(uint16_t conn_handle, uint16_t attr_handle,
                                  struct ble_gatt_access_ctxt *ctxt, void *arg) {
   return 0; // nothing to do here for pure notifications
@@ -199,7 +183,6 @@ int send_click_ble_callback(uint16_t conn_handle, void *data) {
 
 void send_reading_ble() {
   ESP_LOGI(TAG, "Starting BLE click notification");
-  // int64_t timestamp = xx_time_get_time();
 
   cJSON *root = cJSON_CreateObject();
   if (bmp_error == NO_INITIAL_READING || bmp_error == READING_ERROR) {
@@ -217,7 +200,6 @@ void send_reading_ble() {
     cJSON_AddNumberToObject(root, "humidity", humidity);
   }
 
-  // cJSON_AddNumberToObject(root, "timestamp", timestamp);
   char *json_data = cJSON_PrintUnformatted(root);
 
   ble_gap_conn_foreach_handle(send_click_ble_callback, (void *)json_data);
