@@ -21,7 +21,7 @@ jobs:
         uses: espressif/esp-idf-ci-action@v1
         with:
           esp_idf_version: v5.5
-          target: esp32s3
+          target: esp32-s3
           path: bletemps
 
       - name: Archive Build Artifacts
